@@ -12,22 +12,36 @@ let pedidos = JSON.parse(localStorage.getItem("pedidos")) || pedidosIniciais;
 let pedidoEditandoIndex = null;
 
 const ordersTable = document.querySelector("#ordersTable");
+const mobileOrdersList = document.querySelector("#mobileOrdersList");
 const searchInput = document.querySelector("#searchInput");
 const monthFilter = document.querySelector("#monthFilter");
 const statusFilter = document.querySelector("#statusFilter");
+const mobileSearchInput = document.querySelector("#mobileSearchInput");
+const mobileMonthFilter = document.querySelector("#mobileMonthFilter");
+const mobileStatusFilter = document.querySelector("#mobileStatusFilter");
 const ordersCount = document.querySelector("#ordersCount");
+const mobileOrdersCount = document.querySelector("#mobileOrdersCount");
 const productList = document.querySelector("#productList");
+const mobileProductList = document.querySelector("#mobileProductList");
 const salesChart = document.querySelector("#salesChart");
+const mobileSalesChart = document.querySelector("#mobileSalesChart");
 
 const revenue = document.querySelector("#revenue");
 const totalOrders = document.querySelector("#totalOrders");
 const averageTicket = document.querySelector("#averageTicket");
 const conversion = document.querySelector("#conversion");
+const mobileRevenue = document.querySelector("#mobileRevenue");
+const mobileTotalOrders = document.querySelector("#mobileTotalOrders");
+const mobileAverageTicket = document.querySelector("#mobileAverageTicket");
+const mobileConversion = document.querySelector("#mobileConversion");
 
 const openModalButton = document.querySelector("#openModalButton");
+const mobileOpenModalButton = document.querySelector("#mobileOpenModalButton");
+const mobileNewSaleButton = document.querySelector("#mobileNewSaleButton");
 const closeModalButton = document.querySelector("#closeModalButton");
 const cancelModalButton = document.querySelector("#cancelModalButton");
 const exportCsvButton = document.querySelector("#exportCsvButton");
+const mobileExportCsvButton = document.querySelector("#mobileExportCsvButton");
 const clearDataButton = document.querySelector("#clearDataButton");
 const restoreDataButton = document.querySelector("#restoreDataButton");
 
@@ -118,6 +132,11 @@ function atualizarMetricas() {
   totalOrders.textContent = pedidosFiltrados.length;
   averageTicket.textContent = formatarDinheiro(ticketMedio);
   conversion.textContent = `${taxaConversao.toFixed(1)}%`;
+
+  mobileRevenue.textContent = formatarDinheiro(faturamento);
+  mobileTotalOrders.textContent = pedidosFiltrados.length;
+  mobileAverageTicket.textContent = formatarDinheiro(ticketMedio);
+  mobileConversion.textContent = `${taxaConversao.toFixed(1)}%`;
 }
 
 function renderizarProdutos() {
@@ -145,12 +164,25 @@ function renderizarProdutos() {
 
   if (ranking.length === 0) {
     productList.innerHTML = `<p class="empty-message">Nenhum produto encontrado.</p>`;
+    mobileProductList.innerHTML = `<p class="empty-message">Nenhum produto encontrado.</p>`;
     return;
   }
 
   productList.innerHTML = ranking.map(function (produto) {
     return `
       <div class="product-item">
+        <div>
+          <strong>${produto.nome}</strong>
+          <span>${produto.quantidade} vendas</span>
+        </div>
+        <p>${formatarDinheiro(produto.total)}</p>
+      </div>
+    `;
+  }).join("");
+
+  mobileProductList.innerHTML = ranking.map(function (produto) {
+    return `
+      <div class="mobile-product-item">
         <div>
           <strong>${produto.nome}</strong>
           <span>${produto.quantidade} vendas</span>
@@ -191,7 +223,7 @@ function renderizarGrafico() {
     return mes.total;
   }));
 
-  salesChart.innerHTML = meses.map(function (mes) {
+  const graficoHtml = meses.map(function (mes) {
     const altura = maiorValor > 0 ? (mes.total / maiorValor) * 100 : 0;
 
     return `
@@ -202,12 +234,16 @@ function renderizarGrafico() {
       </div>
     `;
   }).join("");
+
+  salesChart.innerHTML = graficoHtml;
+  mobileSalesChart.innerHTML = graficoHtml;
 }
 
 function renderizarPedidos() {
   const pedidosFiltrados = obterPedidosFiltrados();
 
   ordersCount.textContent = `${pedidosFiltrados.length} pedidos`;
+  mobileOrdersCount.textContent = `${pedidosFiltrados.length} pedidos`;
 
   if (pedidosFiltrados.length === 0) {
     ordersTable.innerHTML = `
@@ -215,6 +251,7 @@ function renderizarPedidos() {
         <td colspan="6" class="empty-message">Nenhum pedido encontrado.</td>
       </tr>
     `;
+    mobileOrdersList.innerHTML = `<p class="empty-message">Nenhum pedido encontrado.</p>`;
     return;
   }
 
@@ -241,6 +278,35 @@ function renderizarPedidos() {
           </div>
         </td>
       </tr>
+    `;
+  }).join("");
+
+  mobileOrdersList.innerHTML = pedidosFiltrados.map(function (pedido) {
+    return `
+      <article class="mobile-order-card">
+        <div class="mobile-order-top">
+          <div>
+            <strong>${pedido.cliente}</strong>
+            <span>${pedido.produto}</span>
+          </div>
+          <p class="mobile-order-value">${formatarDinheiro(pedido.valor)}</p>
+        </div>
+
+        <div class="mobile-order-meta">
+          <span>${formatarData(pedido.data)}</span>
+          <span>${pedido.quantidade} un.</span>
+          <span class="status ${pegarClasseStatus(pedido.status)}">${pedido.status}</span>
+        </div>
+
+        <div class="mobile-order-actions">
+          <button class="table-button" onclick="editarPedido(${pedido.indexOriginal})">
+            Editar
+          </button>
+          <button class="table-button delete" onclick="excluirPedido(${pedido.indexOriginal})">
+            Excluir
+          </button>
+        </div>
+      </article>
     `;
   }).join("");
 }
@@ -286,6 +352,7 @@ function exportarCsv() {
   link.click();
 
   URL.revokeObjectURL(url);
+  fecharMenuMobile();
 }
 
 function atualizarDashboard() {
@@ -402,14 +469,43 @@ document.querySelectorAll(".mobile-action-link").forEach(function (link) {
 });
 
 openModalButton.addEventListener("click", abrirModal);
+mobileOpenModalButton.addEventListener("click", abrirModal);
+mobileNewSaleButton.addEventListener("click", abrirModal);
 closeModalButton.addEventListener("click", fecharModal);
 cancelModalButton.addEventListener("click", fecharModal);
 exportCsvButton.addEventListener("click", exportarCsv);
+mobileExportCsvButton.addEventListener("click", exportarCsv);
 clearDataButton.addEventListener("click", limparDados);
 restoreDataButton.addEventListener("click", restaurarDadosIniciais);
 
-searchInput.addEventListener("input", atualizarDashboard);
-monthFilter.addEventListener("change", atualizarDashboard);
-statusFilter.addEventListener("change", atualizarDashboard);
+searchInput.addEventListener("input", function () {
+  mobileSearchInput.value = searchInput.value;
+  atualizarDashboard();
+});
+
+monthFilter.addEventListener("change", function () {
+  mobileMonthFilter.value = monthFilter.value;
+  atualizarDashboard();
+});
+
+statusFilter.addEventListener("change", function () {
+  mobileStatusFilter.value = statusFilter.value;
+  atualizarDashboard();
+});
+
+mobileSearchInput.addEventListener("input", function () {
+  searchInput.value = mobileSearchInput.value;
+  atualizarDashboard();
+});
+
+mobileMonthFilter.addEventListener("change", function () {
+  monthFilter.value = mobileMonthFilter.value;
+  atualizarDashboard();
+});
+
+mobileStatusFilter.addEventListener("change", function () {
+  statusFilter.value = mobileStatusFilter.value;
+  atualizarDashboard();
+});
 
 atualizarDashboard();

@@ -70,6 +70,89 @@
         </div>
       </header>
 
+      <section class="mobile-app" aria-label="Versao mobile do dashboard">
+        <div class="mobile-balance-card">
+          <div>
+            <span>Faturamento</span>
+            <strong id="mobileRevenue">R$ 0,00</strong>
+            <p>Somente pedidos pagos</p>
+          </div>
+          <button class="mobile-add-button" id="mobileOpenModalButton" type="button">+</button>
+        </div>
+
+        <div class="mobile-stats">
+          <div>
+            <span>Pedidos</span>
+            <strong id="mobileTotalOrders">0</strong>
+          </div>
+          <div>
+            <span>Ticket medio</span>
+            <strong id="mobileAverageTicket">R$ 0,00</strong>
+          </div>
+          <div>
+            <span>Conversao</span>
+            <strong id="mobileConversion">0%</strong>
+          </div>
+        </div>
+
+        <div class="mobile-actions-row">
+          <button class="button" id="mobileNewSaleButton" type="button">Nova venda</button>
+          <button class="secondary-button" id="mobileExportCsvButton" type="button">Exportar</button>
+        </div>
+
+        <div class="mobile-search-card">
+          <input type="text" id="mobileSearchInput" placeholder="Buscar cliente ou produto">
+          <div class="mobile-filter-row">
+            <select id="mobileMonthFilter">
+              <option value="todos">Todos os meses</option>
+              <option value="01">Janeiro</option>
+              <option value="02">Fevereiro</option>
+              <option value="03">Marco</option>
+              <option value="04">Abril</option>
+              <option value="05">Maio</option>
+              <option value="06">Junho</option>
+            </select>
+
+            <select id="mobileStatusFilter">
+              <option value="todos">Todos os status</option>
+              <option value="Pago">Pago</option>
+              <option value="Pendente">Pendente</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mobile-compact-card">
+          <div class="mobile-section-title">
+            <div>
+              <span>Vendas</span>
+              <strong>Por mes</strong>
+            </div>
+          </div>
+          <div class="mobile-chart" id="mobileSalesChart"></div>
+        </div>
+
+        <div class="mobile-compact-card">
+          <div class="mobile-section-title">
+            <div>
+              <span>Ranking</span>
+              <strong>Produtos</strong>
+            </div>
+          </div>
+          <div class="mobile-product-list" id="mobileProductList"></div>
+        </div>
+
+        <div class="mobile-section-title">
+          <div>
+            <span>Pedidos</span>
+            <strong>Recentes</strong>
+          </div>
+          <p id="mobileOrdersCount">0 pedidos</p>
+        </div>
+
+        <div class="mobile-orders-list" id="mobileOrdersList"></div>
+      </section>
+
       <section class="metrics">
         <div class="card">
           <p class="card-label">Faturamento</p>
