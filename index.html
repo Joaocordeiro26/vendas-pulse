@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendas Pulse</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">VP</div>
+        <div>
+          <strong>Vendas Pulse</strong>
+          <span>Dashboard comercial</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active">Overview</a>
+        <a href="#orders" class="nav-item">Vendas</a>
+        <a href="#products" class="nav-item">Produtos</a>
+        <a href="#reports" class="nav-item">Relatórios</a>
+      </nav>
+
+      <div class="sidebar-card">
+        <span>Status</span>
+        <strong>Dashboard ativo</strong>
+        <p>Dados salvos localmente no navegador.</p>
+      </div>
+    </aside>
+
+    <main class="dashboard">
+      <header class="header">
+        <div class="header-text">
+          <p class="label">Painel da loja</p>
+          <h1>Vendas Pulse</h1>
+          <p class="description">
+            Acompanhe o pulso das vendas, pedidos e desempenho da sua loja.
+          </p>
+        </div>
+
+        <button class="mobile-menu-button" id="mobileMenuButton" type="button" aria-label="Abrir menu">
+          ☰
+        </button>
+
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+
+        <div class="header-actions" id="headerActions">
+          <div class="mobile-actions-header">
+            <div>
+              <strong>Menu</strong>
+              <span>Atalhos e ações</span>
+            </div>
+            <button class="close-button" id="closeMobileMenuButton" type="button">×</button>
+          </div>
+
+          <nav class="mobile-action-nav">
+            <a href="#" class="mobile-action-link">Overview</a>
+            <a href="#orders" class="mobile-action-link">Vendas</a>
+            <a href="#products" class="mobile-action-link">Produtos</a>
+            <a href="#reports" class="mobile-action-link">Relatórios</a>
+          </nav>
+
+          <button class="secondary-button" id="restoreDataButton">Restaurar exemplo</button>
+          <button class="danger-button" id="clearDataButton">Limpar dados</button>
+          <button class="secondary-button" id="exportCsvButton">Exportar CSV</button>
+          <button class="button" id="openModalButton">Nova venda</button>
+        </div>
+      </header>
+
+      <section class="metrics">
+        <div class="card">
+          <p class="card-label">Faturamento</p>
+          <h2 id="revenue">R$ 0,00</h2>
+          <span class="card-detail positive">Pedidos pagos</span>
+        </div>
+
+        <div class="card">
+          <p class="card-label">Pedidos</p>
+          <h2 id="totalOrders">0</h2>
+          <span class="card-detail positive">Total filtrado</span>
+        </div>
+
+        <div class="card">
+          <p class="card-label">Ticket médio</p>
+          <h2 id="averageTicket">R$ 0,00</h2>
+          <span class="card-detail">Por pedido pago</span>
+        </div>
+
+        <div class="card">
+          <p class="card-label">Conversão</p>
+          <h2 id="conversion">0%</h2>
+          <span class="card-detail">Pedidos pagos / total</span>
+        </div>
+      </section>
+
+      <section class="dashboard-content">
+        <div class="chart-card" id="reports">
+          <div class="section-header">
+            <div>
+              <p class="label">Vendas por mês</p>
+              <h2>Faturamento mensal</h2>
+            </div>
+
+            <span class="badge">2026</span>
+          </div>
+
+          <div class="chart" id="salesChart"></div>
+        </div>
+
+        <div class="products-card" id="products">
+          <div class="section-header">
+            <div>
+              <p class="label">Ranking</p>
+              <h2>Produtos mais vendidos</h2>
+            </div>
+          </div>
+
+          <div class="product-list" id="productList"></div>
+        </div>
+      </section>
+
+      <section class="orders-card" id="orders">
+        <div class="section-header">
+          <div>
+            <p class="label">Pedidos</p>
+            <h2>Pedidos recentes</h2>
+          </div>
+
+          <span class="badge" id="ordersCount">0 pedidos</span>
+        </div>
+
+        <div class="filters">
+          <input type="text" id="searchInput" placeholder="Buscar cliente ou produto">
+
+          <select id="monthFilter">
+            <option value="todos">Todos os meses</option>
+            <option value="01">Janeiro</option>
+            <option value="02">Fevereiro</option>
+            <option value="03">Março</option>
+            <option value="04">Abril</option>
+            <option value="05">Maio</option>
+            <option value="06">Junho</option>
+          </select>
+
+          <select id="statusFilter">
+            <option value="todos">Todos os status</option>
+            <option value="Pago">Pago</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Produto</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Valor</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody id="ordersTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="saleModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <p class="label">Novo pedido</p>
+          <h2 id="modalTitle">Cadastrar venda</h2>
+        </div>
+
+        <button class="close-button" id="closeModalButton" type="button">×</button>
+      </div>
+
+      <form id="saleForm" class="sale-form">
+        <input type="text" id="customerInput" placeholder="Nome do cliente" required>
+        <input type="text" id="productInput" placeholder="Produto vendido" required>
+        <input type="number" id="quantityInput" placeholder="Quantidade" min="1" required>
+        <input type="date" id="dateInput" required>
+
+        <select id="saleStatusInput" required>
+          <option value="Pago">Pago</option>
+          <option value="Pendente">Pendente</option>
+          <option value="Cancelado">Cancelado</option>
+        </select>
+
+        <input type="number" id="valueInput" placeholder="Valor total" min="0" step="0.01" required>
+
+        <div class="form-actions">
+          <button class="secondary-button" id="cancelModalButton" type="button">Cancelar</button>
+          <button class="button" id="saveSaleButton" type="submit">Salvar venda</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
