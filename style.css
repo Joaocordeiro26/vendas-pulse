@@ -1637,6 +1637,87 @@ tbody tr:hover {
 @media (max-width: 700px) {
   html {
     min-height: 100%;
+    background-color: #090408;
+    background-image:
+      radial-gradient(circle at 50% -180px, rgba(255, 61, 154, 0.34), transparent 460px),
+      linear-gradient(180deg, #120812 0%, #050507 42%, #050507 100%);
+    overscroll-behavior-y: auto !important;
+    overscroll-behavior-x: none;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: #090408;
+    background-image:
+      radial-gradient(circle at 50% -180px, rgba(255, 61, 154, 0.34), transparent 460px),
+      linear-gradient(180deg, #120812 0%, #050507 42%, #050507 100%);
+    background-attachment: fixed;
+    overscroll-behavior-y: auto !important;
+    overscroll-behavior-x: none;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: -120vh 0 -120vh 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 50% 0, rgba(255, 61, 154, 0.24), transparent 420px),
+      linear-gradient(180deg, #120812 0%, #050507 46%, #050507 100%);
+  }
+
+  .app-layout,
+  .dashboard,
+  .mobile-app {
+    background: transparent !important;
+  }
+
+  .header {
+    position: relative !important;
+    z-index: 2147481000 !important;
+    isolation: auto !important;
+    transform: none !important;
+    overflow: visible !important;
+  }
+
+  .mobile-menu-button {
+    position: relative !important;
+    z-index: 2147481200 !important;
+  }
+
+  .mobile-menu-backdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147482000 !important;
+  }
+
+  .mobile-menu-backdrop.open {
+    display: block !important;
+  }
+
+  .header-actions {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 2147483000 !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    transform: translate3d(110%, 0, 0) !important;
+    will-change: transform;
+  }
+
+  .header-actions.open,
+  body.menu-open .header-actions {
+    transform: translate3d(0, 0, 0) !important;
+  }
+}
+
+@media (max-width: 700px) {
+  html {
+    min-height: 100%;
     background:
       radial-gradient(circle at 50% -80px, rgba(255, 61, 154, 0.18), transparent 320px),
       var(--bg);
@@ -1931,5 +2012,86 @@ tbody tr:hover {
   .chart::-webkit-scrollbar-thumb,
   .table-wrapper::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.14);
+  }
+}
+
+@media (max-width: 700px) {
+  html {
+    min-height: 100%;
+    background-color: #090408 !important;
+    background-image:
+      radial-gradient(circle at 50% -180px, rgba(255, 61, 154, 0.34), transparent 460px),
+      linear-gradient(180deg, #120812 0%, #050507 42%, #050507 100%) !important;
+    overscroll-behavior-y: auto !important;
+    overscroll-behavior-x: none !important;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: #090408 !important;
+    background-image:
+      radial-gradient(circle at 50% -180px, rgba(255, 61, 154, 0.34), transparent 460px),
+      linear-gradient(180deg, #120812 0%, #050507 42%, #050507 100%) !important;
+    background-attachment: fixed;
+    overscroll-behavior-y: auto !important;
+    overscroll-behavior-x: none !important;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: -120vh 0 -120vh 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 50% 0, rgba(255, 61, 154, 0.24), transparent 420px),
+      linear-gradient(180deg, #120812 0%, #050507 46%, #050507 100%);
+  }
+
+  .app-layout,
+  .dashboard,
+  .mobile-app {
+    background: transparent !important;
+  }
+
+  .header {
+    position: relative !important;
+    z-index: 2147481000 !important;
+    isolation: auto !important;
+    transform: none !important;
+    overflow: visible !important;
+  }
+
+  .mobile-menu-button {
+    position: relative !important;
+    z-index: 2147481200 !important;
+  }
+
+  .mobile-menu-backdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147482000 !important;
+  }
+
+  .mobile-menu-backdrop.open {
+    display: block !important;
+  }
+
+  .header-actions {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 2147483000 !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    transform: translate3d(110%, 0, 0) !important;
+    will-change: transform;
+  }
+
+  .header-actions.open,
+  body.menu-open .header-actions {
+    transform: translate3d(0, 0, 0) !important;
   }
 }
