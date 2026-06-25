@@ -2095,3 +2095,63 @@ tbody tr:hover {
     transform: translate3d(0, 0, 0) !important;
   }
 }
+
+@media (max-width: 700px) {
+  body {
+    padding-top: 10px;
+    background-color: #000000 !important;
+    background-image: none !important;
+  }
+
+  html {
+    background-color: #000000 !important;
+    background-image: none !important;
+  }
+
+  body::before {
+    background: #000000 !important;
+  }
+
+  .app-layout {
+    background: #000000 !important;
+  }
+
+  .dashboard {
+    position: relative;
+    max-width: 430px !important;
+    margin: 0 auto !important;
+    padding: 14px 14px 30px !important;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 28px 28px 0 0;
+    overflow: hidden;
+    background: transparent !important;
+    box-shadow:
+      inset 0 1px 0 rgb(0, 0, 0),
+      0 -18px 48px rgb(0, 0, 0);
+  }
+
+  .dashboard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: 28px 28px 0 0;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(10, 3, 8, 0.98), rgb(5, 5, 7) 44%, rgba(5, 5, 7, 0.86));
+  }
+
+  .dashboard > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .header {
+    padding-top: 0 !important;
+  }
+
+  .mobile-app {
+    background: transparent !important;
+  }
+}
