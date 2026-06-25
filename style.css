@@ -1635,6 +1635,54 @@ tbody tr:hover {
 }
 
 @media (max-width: 700px) {
+  html {
+    min-height: 100%;
+    background:
+      radial-gradient(circle at 50% -80px, rgba(255, 61, 154, 0.18), transparent 320px),
+      var(--bg);
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    min-height: 100dvh;
+    background:
+      radial-gradient(circle at 50% -80px, rgba(255, 61, 154, 0.18), transparent 320px),
+      var(--bg);
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: none;
+  }
+
+  .app-layout,
+  .dashboard {
+    background: transparent;
+  }
+
+  .header {
+    position: relative;
+    z-index: 300;
+    isolation: isolate;
+  }
+
+  .mobile-menu-button {
+    position: relative;
+    z-index: 320;
+  }
+
+  .mobile-menu-backdrop {
+    z-index: 900;
+  }
+
+  .header-actions {
+    z-index: 1000;
+  }
+
+  body.menu-open .header-actions {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 700px) {
   html,
   body {
     width: 100%;
