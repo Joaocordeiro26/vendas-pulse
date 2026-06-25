@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vendas Pulse</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="app-layout">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brand-logo">VP</div>
+        <div class="brand-logo">
+          <img src="favicon.svg" alt="" aria-hidden="true">
+        </div>
         <div>
           <strong>Vendas Pulse</strong>
           <span>Dashboard comercial</span>
@@ -18,7 +21,7 @@
       </div>
 
       <nav class="sidebar-nav">
-        <a href="#" class="nav-item active">Overview</a>
+        <a href="#overview" class="nav-item active">Overview</a>
         <a href="#orders" class="nav-item">Vendas</a>
         <a href="#products" class="nav-item">Produtos</a>
         <a href="#reports" class="nav-item">Relatórios</a>
@@ -57,10 +60,10 @@
           </div>
 
           <nav class="mobile-action-nav">
-            <a href="#" class="mobile-action-link">Overview</a>
-            <a href="#orders" class="mobile-action-link">Vendas</a>
-            <a href="#products" class="mobile-action-link">Produtos</a>
-            <a href="#reports" class="mobile-action-link">Relatórios</a>
+            <a href="#mobileOverview" class="mobile-action-link">Overview</a>
+            <a href="#mobileOrders" class="mobile-action-link">Vendas</a>
+            <a href="#mobileProducts" class="mobile-action-link">Produtos</a>
+            <a href="#mobileReports" class="mobile-action-link">Relatórios</a>
           </nav>
 
           <button class="secondary-button" id="restoreDataButton">Restaurar exemplo</button>
@@ -70,7 +73,7 @@
         </div>
       </header>
 
-      <section class="mobile-app" aria-label="Versao mobile do dashboard">
+      <section class="mobile-app" id="mobileOverview" aria-label="Versão mobile do dashboard">
         <div class="mobile-balance-card">
           <div>
             <span>Faturamento</span>
@@ -86,28 +89,28 @@
             <strong id="mobileTotalOrders">0</strong>
           </div>
           <div>
-            <span>Ticket medio</span>
+            <span>Ticket médio</span>
             <strong id="mobileAverageTicket">R$ 0,00</strong>
           </div>
           <div>
-            <span>Conversao</span>
+            <span>Conversão</span>
             <strong id="mobileConversion">0%</strong>
           </div>
         </div>
 
         <div class="mobile-actions-row">
           <button class="button" id="mobileNewSaleButton" type="button">Nova venda</button>
-          <button class="secondary-button" id="mobileExportCsvButton" type="button">Exportar</button>
+          <button class="secondary-button" id="mobileToggleFiltersButton" type="button">Filtros</button>
         </div>
 
-        <div class="mobile-search-card">
+        <div class="mobile-search-card" id="mobileFiltersPanel">
           <input type="text" id="mobileSearchInput" placeholder="Buscar cliente ou produto">
           <div class="mobile-filter-row">
             <select id="mobileMonthFilter">
               <option value="todos">Todos os meses</option>
               <option value="01">Janeiro</option>
               <option value="02">Fevereiro</option>
-              <option value="03">Marco</option>
+              <option value="03">Março</option>
               <option value="04">Abril</option>
               <option value="05">Maio</option>
               <option value="06">Junho</option>
@@ -120,19 +123,21 @@
               <option value="Cancelado">Cancelado</option>
             </select>
           </div>
+
+          <button class="secondary-button mobile-export-button" id="mobileExportCsvButton" type="button">Exportar CSV</button>
         </div>
 
-        <div class="mobile-compact-card">
+        <div class="mobile-compact-card" id="mobileReports">
           <div class="mobile-section-title">
             <div>
               <span>Vendas</span>
-              <strong>Por mes</strong>
+              <strong>Por mês</strong>
             </div>
           </div>
           <div class="mobile-chart" id="mobileSalesChart"></div>
         </div>
 
-        <div class="mobile-compact-card">
+        <div class="mobile-compact-card" id="mobileProducts">
           <div class="mobile-section-title">
             <div>
               <span>Ranking</span>
@@ -142,7 +147,7 @@
           <div class="mobile-product-list" id="mobileProductList"></div>
         </div>
 
-        <div class="mobile-section-title">
+        <div class="mobile-section-title" id="mobileOrders">
           <div>
             <span>Pedidos</span>
             <strong>Recentes</strong>
@@ -153,7 +158,7 @@
         <div class="mobile-orders-list" id="mobileOrdersList"></div>
       </section>
 
-      <section class="metrics">
+      <section class="metrics" id="overview">
         <div class="card">
           <p class="card-label">Faturamento</p>
           <h2 id="revenue">R$ 0,00</h2>
@@ -270,7 +275,15 @@
       <form id="saleForm" class="sale-form">
         <input type="text" id="customerInput" placeholder="Nome do cliente" required>
         <input type="text" id="productInput" placeholder="Produto vendido" required>
-        <input type="number" id="quantityInput" placeholder="Quantidade" min="1" required>
+
+        <div class="number-field">
+          <input class="number-input" type="number" id="quantityInput" placeholder="Quantidade" min="1" required>
+          <div class="number-controls">
+            <button class="number-step" type="button" data-target="quantityInput" data-step="1">▲</button>
+            <button class="number-step" type="button" data-target="quantityInput" data-step="-1">▼</button>
+          </div>
+        </div>
+
         <input type="date" id="dateInput" required>
 
         <select id="saleStatusInput" required>
@@ -286,6 +299,19 @@
           <button class="button" id="saveSaleButton" type="submit">Salvar venda</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div class="app-dialog-overlay" id="appDialog">
+    <div class="app-dialog">
+      <div class="app-dialog-icon" id="appDialogIcon">!</div>
+      <h2 id="appDialogTitle">Aviso</h2>
+      <p id="appDialogMessage">Mensagem do sistema.</p>
+
+      <div class="app-dialog-actions">
+        <button class="secondary-button" id="appDialogCancelButton" type="button">Cancelar</button>
+        <button class="button" id="appDialogConfirmButton" type="button">Confirmar</button>
+      </div>
     </div>
   </div>
 

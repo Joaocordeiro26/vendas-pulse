@@ -19,6 +19,8 @@ const statusFilter = document.querySelector("#statusFilter");
 const mobileSearchInput = document.querySelector("#mobileSearchInput");
 const mobileMonthFilter = document.querySelector("#mobileMonthFilter");
 const mobileStatusFilter = document.querySelector("#mobileStatusFilter");
+const mobileFiltersPanel = document.querySelector("#mobileFiltersPanel");
+const mobileToggleFiltersButton = document.querySelector("#mobileToggleFiltersButton");
 const ordersCount = document.querySelector("#ordersCount");
 const mobileOrdersCount = document.querySelector("#mobileOrdersCount");
 const productList = document.querySelector("#productList");
@@ -62,6 +64,13 @@ const dateInput = document.querySelector("#dateInput");
 const saleStatusInput = document.querySelector("#saleStatusInput");
 const valueInput = document.querySelector("#valueInput");
 
+const appDialog = document.querySelector("#appDialog");
+const appDialogIcon = document.querySelector("#appDialogIcon");
+const appDialogTitle = document.querySelector("#appDialogTitle");
+const appDialogMessage = document.querySelector("#appDialogMessage");
+const appDialogCancelButton = document.querySelector("#appDialogCancelButton");
+const appDialogConfirmButton = document.querySelector("#appDialogConfirmButton");
+
 function formatarDinheiro(valor) {
   return valor.toLocaleString("pt-BR", {
     style: "currency",
@@ -86,6 +95,66 @@ function pegarClasseStatus(status) {
 
 function salvarPedidos() {
   localStorage.setItem("pedidos", JSON.stringify(pedidos));
+}
+
+function ajustarNumeroInput(input, step) {
+  const valorAtual = input.value === "" ? 0 : Number(input.value);
+  const valorMinimo = input.min === "" ? -Infinity : Number(input.min);
+  const casasDecimais = String(Math.abs(step)).includes(".")
+    ? String(Math.abs(step)).split(".")[1].length
+    : 0;
+
+  const proximoValor = Math.max(valorMinimo, valorAtual + step);
+  input.value = proximoValor.toFixed(casasDecimais);
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+function abrirDialogo({
+  titulo,
+  mensagem,
+  confirmarTexto = "Confirmar",
+  cancelarTexto = "Cancelar",
+  somenteConfirmar = false,
+  icone = "!"
+}) {
+  return new Promise(function (resolve) {
+    appDialogTitle.textContent = titulo;
+    appDialogMessage.textContent = mensagem;
+    appDialogIcon.textContent = icone;
+    appDialogConfirmButton.textContent = confirmarTexto;
+    appDialogCancelButton.textContent = cancelarTexto;
+    appDialogCancelButton.style.display = somenteConfirmar ? "none" : "inline-flex";
+
+    appDialog.classList.add("open");
+    document.body.classList.add("menu-open");
+
+    function fecharDialogo(resultado) {
+      appDialog.classList.remove("open");
+      document.body.classList.remove("menu-open");
+      appDialogConfirmButton.removeEventListener("click", confirmar);
+      appDialogCancelButton.removeEventListener("click", cancelar);
+      appDialog.removeEventListener("click", clicarFora);
+      resolve(resultado);
+    }
+
+    function confirmar() {
+      fecharDialogo(true);
+    }
+
+    function cancelar() {
+      fecharDialogo(false);
+    }
+
+    function clicarFora(event) {
+      if (event.target === appDialog) {
+        fecharDialogo(false);
+      }
+    }
+
+    appDialogConfirmButton.addEventListener("click", confirmar);
+    appDialogCancelButton.addEventListener("click", cancelar);
+    appDialog.addEventListener("click", clicarFora);
+  });
 }
 
 function obterPedidosFiltrados() {
@@ -311,11 +380,21 @@ function renderizarPedidos() {
   }).join("");
 }
 
-function exportarCsv() {
+async function exportarCsv() {
+  return exportarCsvLimpo();
+}
+
+async function exportarCsvLimpo() {
   const pedidosFiltrados = obterPedidosFiltrados();
 
   if (pedidosFiltrados.length === 0) {
-    alert("Não há pedidos para exportar.");
+    await abrirDialogo({
+      titulo: "Nada para exportar",
+      mensagem: "Não há pedidos com os filtros atuais.",
+      confirmarTexto: "Entendi",
+      somenteConfirmar: true,
+      icone: "i"
+    });
     return;
   }
 
@@ -374,6 +453,52 @@ function fecharMenuMobile() {
   document.body.classList.remove("menu-open");
 }
 
+function alternarFiltrosMobile() {
+  mobileFiltersPanel.classList.toggle("open");
+
+  const filtrosAbertos = mobileFiltersPanel.classList.contains("open");
+  mobileToggleFiltersButton.textContent = filtrosAbertos ? "Fechar" : "Filtros";
+}
+
+function rolarParaSecao(event) {
+  const link = event.currentTarget;
+  let destinoId = link.getAttribute("href");
+
+  if (!destinoId || !destinoId.startsWith("#")) return;
+
+  if (window.innerWidth <= 700 && link.classList.contains("mobile-action-link")) {
+    const destinosMobile = {
+      "#overview": "#mobileOverview",
+      "#orders": "#mobileOrders",
+      "#products": "#mobileProducts",
+      "#reports": "#mobileReports"
+    };
+
+    destinoId = destinosMobile[destinoId] || destinoId;
+  }
+
+  const destino = document.querySelector(destinoId);
+  if (!destino) return;
+
+  event.preventDefault();
+
+  const espacamento = window.innerWidth <= 700 ? 12 : 24;
+  const topo = destino.getBoundingClientRect().top + window.scrollY - espacamento;
+
+  window.scrollTo({
+    top: topo,
+    behavior: "smooth"
+  });
+
+  document.querySelectorAll(".nav-item").forEach(function (item) {
+    item.classList.remove("active");
+  });
+
+  document.querySelector(`.nav-item[href="${destinoId}"]`)?.classList.add("active");
+  history.replaceState(null, "", destinoId);
+  fecharMenuMobile();
+}
+
 function abrirModal() {
   fecharMenuMobile();
   saleModal.classList.add("open");
@@ -405,8 +530,14 @@ function editarPedido(index) {
   abrirModal();
 }
 
-function excluirPedido(index) {
-  const confirmar = confirm("Tem certeza que deseja excluir este pedido?");
+async function excluirPedido(index) {
+  const confirmar = await abrirDialogo({
+    titulo: "Excluir pedido?",
+    mensagem: "Essa ação remove o pedido da dashboard.",
+    confirmarTexto: "Excluir",
+    cancelarTexto: "Cancelar",
+    icone: "!"
+  });
 
   if (!confirmar) return;
 
@@ -415,25 +546,39 @@ function excluirPedido(index) {
   atualizarDashboard();
 }
 
-function limparDados() {
-  const confirmar = confirm("Tem certeza que deseja apagar todos os pedidos?");
+async function limparDados() {
+  fecharMenuMobile();
+
+  const confirmar = await abrirDialogo({
+    titulo: "Limpar dados?",
+    mensagem: "Todos os pedidos cadastrados serão apagados deste navegador.",
+    confirmarTexto: "Limpar",
+    cancelarTexto: "Cancelar",
+    icone: "!"
+  });
 
   if (!confirmar) return;
 
   pedidos = [];
   salvarPedidos();
-  fecharMenuMobile();
   atualizarDashboard();
 }
 
-function restaurarDadosIniciais() {
-  const confirmar = confirm("Deseja restaurar os dados de exemplo?");
+async function restaurarDadosIniciais() {
+  fecharMenuMobile();
+
+  const confirmar = await abrirDialogo({
+    titulo: "Restaurar exemplo?",
+    mensagem: "Os pedidos atuais serão substituídos pelos dados de exemplo.",
+    confirmarTexto: "Restaurar",
+    cancelarTexto: "Cancelar",
+    icone: "i"
+  });
 
   if (!confirmar) return;
 
   pedidos = [...pedidosIniciais];
   salvarPedidos();
-  fecharMenuMobile();
   atualizarDashboard();
 }
 
@@ -463,9 +608,23 @@ saleForm.addEventListener("submit", function (event) {
 mobileMenuButton.addEventListener("click", abrirMenuMobile);
 closeMobileMenuButton.addEventListener("click", fecharMenuMobile);
 mobileMenuBackdrop.addEventListener("click", fecharMenuMobile);
+mobileToggleFiltersButton.addEventListener("click", alternarFiltrosMobile);
 
 document.querySelectorAll(".mobile-action-link").forEach(function (link) {
   link.addEventListener("click", fecharMenuMobile);
+});
+
+document.querySelectorAll(".nav-item, .mobile-action-link").forEach(function (link) {
+  link.addEventListener("click", rolarParaSecao);
+});
+
+document.querySelectorAll(".number-step").forEach(function (button) {
+  button.addEventListener("click", function () {
+    const input = document.querySelector(`#${button.dataset.target}`);
+    const step = Number(button.dataset.step);
+
+    ajustarNumeroInput(input, step);
+  });
 });
 
 openModalButton.addEventListener("click", abrirModal);
@@ -473,8 +632,8 @@ mobileOpenModalButton.addEventListener("click", abrirModal);
 mobileNewSaleButton.addEventListener("click", abrirModal);
 closeModalButton.addEventListener("click", fecharModal);
 cancelModalButton.addEventListener("click", fecharModal);
-exportCsvButton.addEventListener("click", exportarCsv);
-mobileExportCsvButton.addEventListener("click", exportarCsv);
+exportCsvButton.addEventListener("click", exportarCsvLimpo);
+mobileExportCsvButton.addEventListener("click", exportarCsvLimpo);
 clearDataButton.addEventListener("click", limparDados);
 restoreDataButton.addEventListener("click", restaurarDadosIniciais);
 
